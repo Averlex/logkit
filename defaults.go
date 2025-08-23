@@ -27,8 +27,16 @@ var DefaultWriterValue = os.Stdout
 const (
 	// LevelTrace is a trace log level - the lowest possible level.
 	LevelTrace = slog.Level(-8)
+	// LevelDebug is an alias for slog.LevelDebug.
+	LevelDebug = slog.LevelDebug
 	// LevelVerbose is a verbose log level - the middleground between Debug and Info levels.
 	LevelVerbose = slog.Level(-2)
+	// LevelInfo is an alias for slog.LevelInfo.
+	LevelInfo = slog.LevelInfo
+	// LevelWarn is an alias for slog.LevelWarn.
+	LevelWarn = slog.LevelWarn
+	// LevelError is an alias for slog.LevelError.
+	LevelError = slog.LevelError
 	// LevelFatal is a fatal log level - the highest possible level.
 	LevelFatal = slog.Level(16)
 )
@@ -47,10 +55,10 @@ var levelNames = map[slog.Level]string{
 // A helper to map log levels received in configuration to their values.
 var levelValues = map[string]slog.Level{
 	"trace":   LevelTrace,
-	"debug":   slog.LevelDebug,
+	"debug":   LevelDebug,
 	"verbose": LevelVerbose,
-	"info":    slog.LevelInfo,
-	"warn":    slog.LevelWarn,
-	"error":   slog.LevelError,
+	"info":    LevelInfo,
+	"warn":    LevelWarn,
+	"error":   LevelError,
 	"fatal":   LevelFatal,
 }
