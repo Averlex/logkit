@@ -57,16 +57,9 @@ func WithConfig(cfg map[string]any) Option {
 
 		if level, ok := cfg["level"]; ok {
 			levelStr := strings.ToLower(level.(string))
-			switch levelStr {
-			case "debug":
-				c.level = slog.LevelDebug
-			case "info":
-				c.level = slog.LevelInfo
-			case "warn":
-				c.level = slog.LevelWarn
-			case "error":
-				c.level = slog.LevelError
-			default:
+			if level, ok := levelValues[levelStr]; ok {
+				c.level = level
+			} else {
 				c.setupLevel = true
 			}
 		}

@@ -16,10 +16,9 @@ func validateLogLevel(cfg map[string]any, ve *validationError) {
 		}
 		levelStr = strings.ToLower(levelStr)
 
-		switch levelStr {
-		case "debug", "info", "warn", "error", "":
-		default:
+		if _, ok := levelValues[levelStr]; !ok {
 			ve.invalidValues = append(ve.invalidValues, "level")
+			return
 		}
 	}
 }

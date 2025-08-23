@@ -22,3 +22,35 @@ var contextRequestKeys = []string{"http_request_id", "grpc_request_id"}
 
 // DefaultWriterValue is a default writer value.
 var DefaultWriterValue = os.Stdout
+
+// Additional log levels.
+const (
+	// LevelTrace is a trace log level - the lowest possible level.
+	LevelTrace = slog.Level(-8)
+	// LevelVerbose is a verbose log level - the middleground between Debug and Info levels.
+	LevelVerbose = slog.Level(-2)
+	// LevelFatal is a fatal log level - the highest possible level.
+	LevelFatal = slog.Level(16)
+)
+
+// A helper to map log levels to their names.
+var levelNames = map[slog.Level]string{
+	LevelTrace:      "TRACE",
+	slog.LevelDebug: "DEBUG",
+	LevelVerbose:    "VERBOSE",
+	slog.LevelInfo:  "INFO",
+	slog.LevelWarn:  "WARN",
+	slog.LevelError: "ERROR",
+	LevelFatal:      "FATAL",
+}
+
+// A helper to map log levels received in configuration to their values.
+var levelValues = map[string]slog.Level{
+	"trace":   LevelTrace,
+	"debug":   slog.LevelDebug,
+	"verbose": LevelVerbose,
+	"info":    slog.LevelInfo,
+	"warn":    slog.LevelWarn,
+	"error":   slog.LevelError,
+	"fatal":   LevelFatal,
+}
