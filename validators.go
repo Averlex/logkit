@@ -79,7 +79,7 @@ func validateLogType(cfg map[string]any, ve *validationError) {
 	}
 }
 
-// validateFields returns missing and wrong type fields found in args.
+// validateTypes returns missing and wrong type fields found in args.
 // optionalFields is a map of field names with their expected types.
 func validateTypes(args map[string]any, optionalFields map[string]any) (invalidTypes []string) {
 	for field, expectedVal := range optionalFields {
