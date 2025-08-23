@@ -65,7 +65,7 @@ func TestLoggerSuite(t *testing.T) {
 func (s *LoggerTestSuite) TestDefaults() {
 	s.Run("set defaults", func() {
 		s.writer.CleanUp()
-		l, err := logger.NewLogger(logger.SetDefaults(), logger.WithWriter(s.writer))
+		l, err := logger.NewLogger(logger.WithDefaults(), logger.WithWriter(s.writer))
 		s.Require().NoError(err, "got error, expected nil")
 
 		l.Info(context.Background(), "test")

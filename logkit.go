@@ -102,9 +102,9 @@ func WithWriter(w io.Writer) Option {
 	}
 }
 
-// SetDefaults applies default configuration to the logger.
+// WithDefaults applies default configuration to the logger.
 // May be overwritten by WithConfig and/or WithWriter options.
-func SetDefaults() Option {
+func WithDefaults() Option {
 	return WithConfig(map[string]any{
 		"format":        DefaultLogType,
 		"level":         DefaultLevel,
@@ -128,7 +128,7 @@ func SetDefaults() Option {
 func NewLogger(opts ...Option) (*Logger, error) {
 	cfg := &Config{}
 
-	if err := SetDefaults()(cfg); err != nil {
+	if err := WithDefaults()(cfg); err != nil {
 		return nil, errors.New("default logger initialization failed")
 	}
 
