@@ -357,7 +357,6 @@ func (s *LoggerTestSuite) TestAdditionalFields() {
 			s.Require().Len(s.writer.arr, 1, "unexpected amount of logs received")
 
 			var logData map[string]any
-			s.T().Log(string(s.writer.arr[0]))
 			err = json.Unmarshal(s.writer.arr[0], &logData)
 			s.Require().NoError(err, "failed to unmarshal log entry")
 
