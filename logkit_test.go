@@ -3,6 +3,7 @@ package logkit_test
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"strings"
 	"testing"
 	"time"
@@ -260,12 +261,19 @@ func (s *LoggerTestSuite) TestTimeTemplate() {
 	}
 }
 
+type contextKey string
+
+func (k contextKey) String() string {
+	return string(k)
+}
+
 func (s *LoggerTestSuite) TestAdditionalFields() {
 	testCases := []struct {
 		name     string
 		msg      string
 		fields   []any
 		expected map[string]any
+		ctx      context.Context
 	}{
 		{
 			name:   "single field",
@@ -305,6 +313,26 @@ func (s *LoggerTestSuite) TestAdditionalFields() {
 			fields:   []any{},
 			expected: map[string]any{"msg": "no fields"},
 		},
+		{
+			name:   "context fields/simple field",
+			msg:    "context fields",
+			ctx:    context.WithValue(context.Background(), contextKey("user_id"), 123),
+			fields: []any{},
+			expected: map[string]any{
+				"msg":     "context fields",
+				"user_id": 123,
+			},
+		},
+		{
+			name:   "context fields/slog attr field",
+			msg:    "context fields",
+			ctx:    context.WithValue(context.Background(), contextKey("user_id"), slog.Int("user_id", 123)),
+			fields: []any{},
+			expected: map[string]any{
+				"msg":     "context fields",
+				"user_id": 123,
+			},
+		},
 	}
 
 	for _, tC := range testCases {
@@ -317,13 +345,19 @@ func (s *LoggerTestSuite) TestAdditionalFields() {
 					"log_stream":    "stdout",
 				}),
 				logger.WithWriter(s.writer),
+				logger.WithExtraContextFields([]any{contextKey("user_id")}...),
 			)
 			s.Require().NoError(err, "got error, expected nil")
 
-			l.Info(context.Background(), tC.msg, tC.fields...)
+			if tC.ctx != nil {
+				l.Info(tC.ctx, tC.msg, tC.fields...)
+			} else {
+				l.Info(context.Background(), tC.msg, tC.fields...)
+			}
 			s.Require().Len(s.writer.arr, 1, "unexpected amount of logs received")
 
 			var logData map[string]any
+			s.T().Log(string(s.writer.arr[0]))
 			err = json.Unmarshal(s.writer.arr[0], &logData)
 			s.Require().NoError(err, "failed to unmarshal log entry")
 

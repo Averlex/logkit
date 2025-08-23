@@ -18,8 +18,6 @@ const (
 	DefaultWriter = "stdout"
 )
 
-var contextRequestKeys = []string{"http_request_id", "grpc_request_id"}
-
 // DefaultWriterValue is a default writer value.
 var DefaultWriterValue = os.Stdout
 

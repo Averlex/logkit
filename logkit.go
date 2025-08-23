@@ -16,13 +16,14 @@ type Option func(c *Config) error
 
 // Config defines an inner logger configuration.
 type Config struct {
-	handlerOpts  *slog.HandlerOptions
-	logType      string
-	handler      slog.Handler
-	writer       io.Writer
-	timeTemplate string
-	level        slog.Level
-	setupLevel   bool
+	handlerOpts    *slog.HandlerOptions
+	logType        string
+	handler        slog.Handler
+	writer         io.Writer
+	timeTemplate   string
+	level          slog.Level
+	setupLevel     bool
+	extraCtxFields []any
 }
 
 // WithConfig allows to apply custom configuration.
@@ -113,6 +114,24 @@ func WithDefaults() Option {
 	})
 }
 
+// WithExtraContextFields configures the logger to automatically include
+// specified keys from the context in every log record.
+//
+// If a context value for a given key is of type slog.Attr, it is used directly.
+// Otherwise, the value is wrapped as slog.Any(key, value), and formatting
+// is handled by slog according to its default rules.
+//
+// If no fields are provided, the option does nothing and returns no error.
+func WithExtraContextFields(fields ...any) Option {
+	return func(c *Config) error {
+		if len(fields) == 0 {
+			return nil
+		}
+		c.extraCtxFields = append(c.extraCtxFields, fields...)
+		return nil
+	}
+}
+
 // NewLogger returns a new Logger with the given log type and level.
 // If no opts are provided, it returns a default logger.
 //
@@ -138,5 +157,5 @@ func NewLogger(opts ...Option) (*Logger, error) {
 		}
 	}
 
-	return &Logger{slog.New(cfg.handler)}, nil
+	return &Logger{slog.New(cfg.handler), cfg.extraCtxFields}, nil
 }
