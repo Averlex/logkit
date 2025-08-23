@@ -91,7 +91,7 @@ func (s *LoggerTestSuite) TestDefaults() {
 }
 
 func (s *LoggerTestSuite) TestLogLevel() {
-	callOrder := []string{"debug", "info", "warn", "error"}
+	callOrder := []string{"trace", "debug", "verbose", "info", "warn", "error"}
 	testCases := []struct {
 		name         string
 		level        string
@@ -99,12 +99,14 @@ func (s *LoggerTestSuite) TestLogLevel() {
 		expectedSize int
 		expectError  bool
 	}{
-		{"debug", "debug", "debug-test", 4, false},
+		{"trace", "trace", "trace-test", 6, false},
+		{"debug", "debug", "debug-test", 5, false},
+		{"verbose", "verbose", "verbose-test", 4, false},
 		{"info", "info", "info-test", 3, false},
 		{"warn", "warn", "warn-test", 2, false},
 		{"error", "error", "error-test", 1, false},
-		{"case insensitivity", "dEbUg", "debug-test", 4, false},
-		{"empty level", "", "empty-test", 1, false},
+		{"case insensitivity", "dEbUg", "debug-test", 5, false},
+		{"empty level", "", "empty-test", 1, true},
 		{"unknown", "unknown", "unknown-test", 0, true},
 	}
 
@@ -126,7 +128,9 @@ func (s *LoggerTestSuite) TestLogLevel() {
 			}
 			s.Require().NoError(err, "got error, expected nil")
 
+			l.Trace(context.Background(), tC.msg)
 			l.Debug(context.Background(), tC.msg)
+			l.Verbose(context.Background(), tC.msg)
 			l.Info(context.Background(), tC.msg)
 			l.Warn(context.Background(), tC.msg)
 			l.Error(context.Background(), tC.msg)
