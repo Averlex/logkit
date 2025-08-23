@@ -25,22 +25,6 @@ type Config struct {
 	setupLevel   bool
 }
 
-// checkDefaults sets default values for the logger configurations, if they are empty.
-func (c *Config) checkDefaults() {
-	if c.logType == "" {
-		c.logType = DefaultLogType
-	}
-	if c.writer == nil {
-		c.writer = DefaultWriterValue
-	}
-	if c.timeTemplate == "" {
-		c.timeTemplate = DefaultTimeTemplate
-	}
-	if c.setupLevel {
-		c.level = DefaultLevelValue
-	}
-}
-
 // WithConfig allows to apply custom configuration.
 // Expected following config structure:
 //
@@ -67,7 +51,7 @@ func WithConfig(cfg map[string]any) Option {
 		validateWriter(cfg, ve)
 		validateLogType(cfg, ve)
 
-		if ve.HasErrors() {
+		if ve.hasErrors() {
 			return fmt.Errorf("config data is invalid: %s", ve.Error())
 		}
 

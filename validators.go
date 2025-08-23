@@ -6,30 +6,6 @@ import (
 	"time"
 )
 
-// validationError is an error type for validation errors which follows error accumulation pattern.
-type validationError struct {
-	invalidTypes  []string
-	invalidValues []string
-}
-
-func (e *validationError) Error() string {
-	var b strings.Builder
-	if len(e.invalidTypes) > 0 {
-		b.WriteString("invalid_type=" + strings.Join(e.invalidTypes, ","))
-	}
-	if len(e.invalidValues) > 0 {
-		if b.Len() > 0 {
-			b.WriteString(", ")
-		}
-		b.WriteString("invalid_value=" + strings.Join(e.invalidValues, ","))
-	}
-	return b.String()
-}
-
-func (e *validationError) HasErrors() bool {
-	return len(e.invalidTypes) > 0 || len(e.invalidValues) > 0
-}
-
 // validateLogLevel is a helper that checks if log level is valid.
 func validateLogLevel(cfg map[string]any, ve *validationError) {
 	if val, ok := cfg["level"]; ok {
@@ -123,4 +99,20 @@ func validateTypes(args map[string]any, optionalFields map[string]any) (invalidT
 	}
 
 	return invalidTypes
+}
+
+// checkDefaults sets default values for the logger configurations, if they are empty.
+func (c *Config) checkDefaults() {
+	if c.logType == "" {
+		c.logType = DefaultLogType
+	}
+	if c.writer == nil {
+		c.writer = DefaultWriterValue
+	}
+	if c.timeTemplate == "" {
+		c.timeTemplate = DefaultTimeTemplate
+	}
+	if c.setupLevel {
+		c.level = DefaultLevelValue
+	}
 }

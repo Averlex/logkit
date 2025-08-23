@@ -25,6 +25,7 @@ func buildHandler(c *Config) slog.Handler {
 	}
 }
 
+// replaceTimeAttrs replaces time.Time values with formatted strings.
 func replaceTimeAttrs(groups []string, a slog.Attr, timeFormat string) slog.Attr {
 	// Default log tilestamp.
 	if a.Key == slog.TimeKey && len(groups) == 0 {
