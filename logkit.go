@@ -125,7 +125,8 @@ func WithWriter(w io.Writer) Option {
 	}
 }
 
-// SetDefaults is a wrapper over WithConfig, passing empty config.
+// SetDefaults applies default configuration to the logger.
+// May be overwritten by WithConfig and/or WithWriter options.
 func SetDefaults() Option {
 	return WithConfig(map[string]any{
 		"format":        DefaultLogType,
