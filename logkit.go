@@ -115,13 +115,32 @@ func WithDefaults() Option {
 }
 
 // WithExtraContextFields configures the logger to automatically include
-// specified keys from the context in every log record.
+// values from the context in every log record, using the provided keys.
 //
-// If a context value for a given key is of type slog.Attr, it is used directly.
-// Otherwise, the value is wrapped as slog.Any(key, value), and formatting
-// is handled by slog according to its default rules.
+// The keys must be comparable (as required by context.Context) and are used
+// directly in ctx.Value(key) to retrieve the corresponding values.
 //
-// If no fields are provided, the option does nothing and returns no error.
+// When a value is found:
+//   - If it is of type slog.Attr, it is added to the log as is.
+//   - Otherwise, it is added as a regular attribute, with the key in the log
+//     determined as follows:
+//   - If the context key is a string, it is used directly.
+//   - If the context key implements fmt.Stringer, its String() method is used.
+//   - All other key types are ignored (no attribute is added).
+//
+// This allows using custom key types (e.g. unexported structs) while still
+// controlling the resulting log field name via fmt.Stringer.
+//
+// Example:
+//
+//	var RequestIDKey struct{}
+//	func (RequestIDKey) String() string { return "request_id" }
+//
+//	logger := NewLogger(WithExtraContextFields(RequestIDKey))
+//	ctx := context.WithValue(ctx, RequestIDKey, "abc-123")
+//	logger.Info(ctx, "event") // → request_id=abc-123
+//
+// If no fields are provided, the option does nothing and returns nil.
 func WithExtraContextFields(fields ...any) Option {
 	return func(c *Config) error {
 		if len(fields) == 0 {

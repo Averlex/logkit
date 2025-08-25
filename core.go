@@ -13,6 +13,17 @@ type Logger struct {
 	extraCtxFields []any
 }
 
+// addContextData extracts values from the context using keys defined via WithExtraContextFields.
+// For each key:
+//   - If the value in the context is of type slog.Attr, it is added to the log as is.
+//   - Otherwise, the value is wrapped as an attribute with a string key derived from the context key:
+//   - If the key is a string, it is used directly.
+//   - If the key implements fmt.Stringer, its String() method is used as the attribute key.
+//   - All other key types are ignored.
+//
+// This logic ensures compatibility with slog's requirement that attribute keys be strings,
+// while allowing context keys to be any comparable type (e.g. custom structs) as long as
+// they provide a string representation via fmt.Stringer or are plain strings.
 func (logg Logger) addContextData(ctx context.Context, args ...any) []any {
 	for _, k := range logg.extraCtxFields {
 		v := ctx.Value(k)
