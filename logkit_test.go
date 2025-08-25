@@ -320,7 +320,7 @@ func (s *LoggerTestSuite) TestAdditionalFields() {
 			fields: []any{},
 			expected: map[string]any{
 				"msg":     "context fields",
-				"user_id": 123,
+				"user_id": float64(123),
 			},
 		},
 		{
@@ -330,7 +330,7 @@ func (s *LoggerTestSuite) TestAdditionalFields() {
 			fields: []any{},
 			expected: map[string]any{
 				"msg":     "context fields",
-				"user_id": 123,
+				"user_id": float64(123),
 			},
 		},
 	}
