@@ -10,7 +10,7 @@ import (
 // Logger is a wrapper structure for an underlying logger.
 type Logger struct {
 	l              *slog.Logger
-	extraCtxFields []any
+	extraCtxFields []any // The field is read-only: writing is possible only on logger initialization.
 }
 
 // addContextData extracts values from the context using keys defined via WithExtraContextFields.

@@ -134,6 +134,9 @@ func WithDefaults() Option {
 // If any of the types provided don't meet the requirements, an error is returned.
 // It includes all the errouneous types in the error message.
 //
+// If no key with the given name is found in the context, it will be safely ignored
+// by the logger.
+//
 // Example:
 //
 //	var RequestIDKey struct{}
