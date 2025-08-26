@@ -131,6 +131,9 @@ func WithDefaults() Option {
 // This allows using custom key types (e.g. unexported structs) while still
 // controlling the resulting log field name via fmt.Stringer.
 //
+// If any of the types provided don't meet the requirements, an error is returned.
+// It includes all the errouneous types in the error message.
+//
 // Example:
 //
 //	var RequestIDKey struct{}
@@ -146,6 +149,11 @@ func WithExtraContextFields(fields ...any) Option {
 		if len(fields) == 0 {
 			return nil
 		}
+
+		if err := validateLoggableContextKeys(fields); err != nil {
+			return err
+		}
+
 		c.extraCtxFields = append(c.extraCtxFields, fields...)
 		return nil
 	}

@@ -1,6 +1,7 @@
 package logkit
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 	"time"
@@ -114,4 +115,25 @@ func (c *Config) checkDefaults() {
 	if c.setupLevel {
 		c.level = DefaultLevelValue
 	}
+}
+
+// validateLoggableContextKeys is a helper that checks if the provided key types
+// are compatible with slog key requirements.
+//
+// The following types are considered compatible: string, fmt.Stringer.
+func validateLoggableContextKeys(keys ...any) error {
+	var errorKeys []string
+	for _, k := range keys {
+		// Key should be slog-compatible: either string or fmt.Stringer.
+		switch k := k.(type) {
+		case string:
+		case fmt.Stringer:
+		default:
+			errorKeys = append(errorKeys, fmt.Sprintf("%T", k))
+		}
+	}
+	if len(errorKeys) != 0 {
+		return fmt.Errorf("invalid context keys: %s", strings.Join(errorKeys, ", "))
+	}
+	return nil
 }
