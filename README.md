@@ -147,6 +147,8 @@ if logger, err := logkit.NewLogger(invalidConfig); err != nil {
 }
 ```
 
+> ⚠️ **Note**: Validation errors are accumulated — you’ll see all issues at once, not just the first one.
+
 ## Testing
 
 `logkit` is designed to be testable:
