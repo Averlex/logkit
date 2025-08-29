@@ -2,7 +2,8 @@ package logkit
 
 import "strings"
 
-// validationError is an error type for validation errors which follows error accumulation pattern.
+// validationError accumulates multiple validation failures (invalid types or values) during config parsing.
+// Used internally by WithConfig to report all issues at once.
 type validationError struct {
 	invalidTypes  []string
 	invalidValues []string

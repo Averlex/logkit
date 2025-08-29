@@ -1,5 +1,5 @@
-// Package logkit package provides a constructor and wrapper methods
-// for an underlying logger (currently - slog.Logger).
+// Package logkit provides a structured logging wrapper over slog.Logger
+// with enhanced context handling, custom levels, and flexible configuration.
 package logkit
 
 import (

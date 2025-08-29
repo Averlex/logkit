@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// buildHandler returns a handler based on log type.
+// buildHandler returns a handler based on config.
 func buildHandler(c *Config) slog.Handler {
 	c.handlerOpts = &slog.HandlerOptions{
 		Level: c.level,

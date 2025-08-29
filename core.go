@@ -7,7 +7,10 @@ import (
 	"os"
 )
 
-// Logger is a wrapper structure for an underlying logger.
+// Logger is a wrapper around slog.Logger that supports:
+//   - automatic context field injection.
+//   - custom log levels (TRACE, VERBOSE, FATAL).
+//   - configurable time format and output.
 type Logger struct {
 	l              *slog.Logger
 	extraCtxFields []any // The field is read-only: writing is possible only on logger initialization.
