@@ -119,23 +119,16 @@ func WithDefaults() Option {
 //
 // The keys must be comparable (as required by context.Context) and are used
 // directly in ctx.Value(key) to retrieve the corresponding values.
+// Compatible key types are:
+//   - string: used directly as the attribute key in logs.
+//   - Any type implementing fmt.Stringer: its String() method is used as the attribute key.
 //
-// When a value is found:
-//   - If it is of type slog.Attr, it is added to the log as is.
-//   - Otherwise, it is added as a regular attribute, with the key in the log
-//     determined as follows:
-//   - If the context key is a string, it is used directly.
-//   - If the context key implements fmt.Stringer, its String() method is used.
-//   - All other key types are ignored (no attribute is added).
+// This includes named string types (e.g., type MyString string) that implement fmt.Stringer.
+// The logger will use these keys to extract values from the context and add them as log attributes:
+//   - If a value is of type slog.Attr, it is added to the log as is - using internal key in slog.Attr pair.
+//   - Otherwise, it is added as a regular attribute with the key as described above.
 //
-// This allows using custom key types (e.g. unexported structs) while still
-// controlling the resulting log field name via fmt.Stringer.
-//
-// If any of the types provided don't meet the requirements, an error is returned.
-// It includes all the errouneous types in the error message.
-//
-// If no key with the given name is found in the context, it will be safely ignored
-// by the logger.
+// If no key is found in the context, it is safely ignored by the logger.
 //
 // Example:
 //
@@ -147,6 +140,7 @@ func WithDefaults() Option {
 //	logger.Info(ctx, "event") // → request_id=abc-123
 //
 // If no fields are provided, the option does nothing and returns nil.
+// If any key types are invalid, a single error listing all erroneous types is returned.
 func WithExtraContextFields(fields ...any) Option {
 	return func(c *Config) error {
 		if len(fields) == 0 {

@@ -23,9 +23,12 @@ type Logger struct {
 //   - If the key implements fmt.Stringer, its String() method is used as the attribute key.
 //   - All other key types are ignored.
 //
-// This logic ensures compatibility with slog's requirement that attribute keys be strings,
-// while allowing context keys to be any comparable type (e.g. custom structs) as long as
-// they provide a string representation via fmt.Stringer or are plain strings.
+// Keys are expected to be of type string or implement fmt.Stringer, as validated during configuration.
+// If no value is found for a key in the context, it is safely ignored.
+//
+// Note: the following logic ensures compatibility with slog's requirement that attribute keys be strings,
+// while allowing context keys to be any comparable type (e.g. custom structs or named string types) as long as
+// they provide a string representation via fmt.Stringer or are plain strings themselves.
 func (logg Logger) addContextData(ctx context.Context, args ...any) []any {
 	for _, k := range logg.extraCtxFields {
 		v := ctx.Value(k)
