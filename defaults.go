@@ -1,8 +1,10 @@
 package logkit
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
+	"reflect"
 )
 
 const (
@@ -60,3 +62,8 @@ var levelValues = map[string]slog.Level{
 	"error":   LevelError,
 	"fatal":   LevelFatal,
 }
+
+// stringerType is a reflect.Type of fmt.Stringer interface.
+// Defined as global to improve performance during context keys validation
+// on logger initialization.
+var stringerType = reflect.TypeOf((*fmt.Stringer)(nil)).Elem()

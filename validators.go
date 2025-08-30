@@ -124,12 +124,20 @@ func (c *Config) checkDefaults() {
 func validateLoggableContextKeys(keys ...any) error {
 	var errorKeys []string
 	for _, k := range keys {
+		if k == nil {
+			errorKeys = append(errorKeys, "<nil>")
+			continue
+		}
+
 		// Key should be slog-compatible: either string or fmt.Stringer.
-		switch k := k.(type) {
-		case string:
-		case fmt.Stringer:
-		default:
-			errorKeys = append(errorKeys, fmt.Sprintf("%T", k))
+		t := reflect.TypeOf(k)
+		// Soft check for a string so it may be used later during logging.
+		if _, ok := k.(string); ok {
+			continue
+		}
+		// Advanced check for fmt.Stringer interface.
+		if t.Implements(stringerType) {
+			continue
 		}
 	}
 	if len(errorKeys) != 0 {
