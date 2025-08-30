@@ -147,7 +147,7 @@ func WithExtraContextFields(fields ...any) Option {
 			return nil
 		}
 
-		if err := validateLoggableContextKeys(fields); err != nil {
+		if err := validateLoggableContextKeys(fields...); err != nil {
 			return err
 		}
 

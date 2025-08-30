@@ -347,6 +347,7 @@ func (s *LoggerTestSuite) TestAdditionalFields() {
 					"log_stream":    "stdout",
 				}),
 				logger.WithWriter(s.writer),
+				// This is intentional: wrapping a private custom types in any.
 				logger.WithExtraContextFields([]any{contextKey("user_id")}...),
 			)
 			s.Require().NoError(err, "got error, expected nil")

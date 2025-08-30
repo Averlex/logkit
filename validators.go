@@ -136,18 +136,12 @@ func validateLoggableContextKeys(keys ...any) error {
 			errorKeys = append(errorKeys, "<nil>")
 			continue
 		}
-
-		// Key should be slog-compatible: either string or fmt.Stringer.
-		t := reflect.TypeOf(k)
-		// Soft check for a string so it may be used later during logging.
-		if _, ok := k.(string); ok {
-			continue
+		switch k.(type) {
+		case string:
+		case fmt.Stringer:
+		default:
+			errorKeys = append(errorKeys, fmt.Sprintf("%T", k))
 		}
-		// Advanced check for fmt.Stringer interface.
-		if t.Implements(stringerType) {
-			continue
-		}
-		errorKeys = append(errorKeys, fmt.Sprintf("%T", k))
 	}
 	if len(errorKeys) != 0 {
 		return fmt.Errorf("invalid context keys: %s", strings.Join(errorKeys, ", "))
