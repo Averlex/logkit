@@ -117,12 +117,20 @@ func (c *Config) checkDefaults() {
 	}
 }
 
-// validateLoggableContextKeys is a helper that checks if the provided key types
-// are compatible with slog key requirements.
+// validateLoggableContextKeys checks if the provided key types are compatible with slog key requirements.
 //
-// The following types are considered compatible: string, fmt.Stringer.
+// Compatible types are:
+//   - string: used directly as a key.
+//   - Any type implementing fmt.Stringer: its String() method will provide the key name for logging later.
+//   - Any other types (including nil values) are considered invalid.
+//
+// WARNING: for named string types (e.g., type MyString string) implement fmt.Stringer,
+// otherwise they will be ignored. This behavior is intentional to avoid reflection
+// overhead on each logging call.
+//
+// Returns an error listing all invalid key types, or nil if all keys are valid.
 func validateLoggableContextKeys(keys ...any) error {
-	var errorKeys []string
+	errorKeys := make([]string, 0, len(keys))
 	for _, k := range keys {
 		if k == nil {
 			errorKeys = append(errorKeys, "<nil>")
@@ -139,6 +147,7 @@ func validateLoggableContextKeys(keys ...any) error {
 		if t.Implements(stringerType) {
 			continue
 		}
+		errorKeys = append(errorKeys, fmt.Sprintf("%T", k))
 	}
 	if len(errorKeys) != 0 {
 		return fmt.Errorf("invalid context keys: %s", strings.Join(errorKeys, ", "))
